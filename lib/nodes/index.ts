@@ -12,6 +12,10 @@ export type Element = Paragraph | Header | List;
 
 export class TextNode {
   public constructor(public readonly text: string) {}
+
+  public getHtml(): string {
+    return this.text;
+  }
 }
 
 type ElemFromAttr = (value: unknown, attrs: LineAttributes) => Element;

@@ -12,10 +12,8 @@ export function deltaToHtml(delta: Delta): string {
     console.warn(`Did not consume all lines: ${consumed}/${lines.length}`);
   }
 
-  return JSON.stringify(nodes, null, 2);
-  return '';
-  // const lines = opsToLines(ops);
-  // return linesToHtml(lines);
+  // return JSON.stringify(nodes, null, 2);
+  return nodesToHtml(nodes);
 }
 
 interface LineContext {
@@ -100,6 +98,10 @@ function textToNode(text: Text): Node {
   }
 
   return node;
+}
+
+function nodesToHtml(nodes: Node[]): string {
+  return nodes.map((node: Node) => node.getHtml()).join('\n');
 }
 
 // function linesToHtml(lines: Line[]): string {
