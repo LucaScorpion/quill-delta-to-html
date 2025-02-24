@@ -2,6 +2,7 @@ import { Delta, Op } from './delta.ts';
 import { attributeToElement, Node, TextNode } from './nodes';
 import { Line, opsToLines, Text } from './line.ts';
 import { BaseElement } from './nodes/base.ts';
+import { Paragraph } from './nodes/paragraph.ts';
 
 export function deltaToHtml(delta: Delta): string {
   const ops = delta.ops as Op[];
@@ -12,8 +13,7 @@ export function deltaToHtml(delta: Delta): string {
     console.warn(`Did not consume all lines: ${consumed}/${lines.length}`);
   }
 
-  // return JSON.stringify(nodes, null, 2);
-  return nodesToHtml(nodes);
+  return nodesToHtml(cleanupNodes(nodes));
 }
 
 interface LineContext {
@@ -98,6 +98,21 @@ function textToNode(text: Text): Node {
   }
 
   return node;
+}
+
+function cleanupNodes(nodes: Node[]): Node[] {
+  return nodes.map((n) => {
+    // Transform root-level text nodes to paragraph elements.
+    if (n instanceof TextNode) {
+      const p = new Paragraph();
+      p.children = [n];
+      return p;
+    }
+
+    // TODO: Bold, italic, etc should also wrap in p.
+
+    return n;
+  });
 }
 
 function nodesToHtml(nodes: Node[]): string {
