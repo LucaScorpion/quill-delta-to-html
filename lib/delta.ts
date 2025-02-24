@@ -13,17 +13,9 @@ export interface InsertOp {
   attributes?: TextAttributes;
 }
 
-export function isInsertOp(op: Op): op is InsertOp {
-  return !isLineFormatOp(op);
-}
-
 export interface LineFormatOp {
   insert: '\n';
   attributes: LineAttributes;
-}
-
-export function isLineFormatOp(op: Op): op is LineFormatOp {
-  return op.insert === '\n' && 'attributes' in op;
 }
 
 export interface TextAttributes extends Record<string, unknown> {
@@ -36,4 +28,5 @@ export interface TextAttributes extends Record<string, unknown> {
 export interface LineAttributes extends Record<string, unknown> {
   header?: number;
   list?: 'ordered' | 'bullet';
+  indent?: number;
 }

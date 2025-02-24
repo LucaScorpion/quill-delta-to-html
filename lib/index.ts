@@ -1,62 +1,81 @@
-import { Delta, isLineFormatOp, Op } from './types.ts';
-import { booleanAttributes } from './booleanAttributes.ts';
-import { LineType, lineTypeAttributes } from './lineType.ts';
-
-interface Line {
-  text: string;
-  type?: LineType;
-}
+import { Delta, Op } from './delta.ts';
+import { attributeToElement, Element, Node, TextNode } from './nodes';
+import { opsToLines } from './line.ts';
 
 export function deltaToHtml(delta: Delta): string {
   const ops = delta.ops as Op[];
   const lines = opsToLines(ops);
-  return linesToHtml(lines);
+  return '';
+  // const lines = opsToLines(ops);
+  // return linesToHtml(lines);
 }
 
-function opsToLines(ops: Op[]): Line[] {
-  let lines: Line[] = [{ text: '' }];
+interface OpContext {
+  elem: Element;
+  indent: number;
+}
+
+function parseOps(ops: Op[], ctx?: OpContext): Node[] {
+  const nodes: Node[] = [];
 
   for (const op of ops) {
-    // Sanity check to ensure we're only processing insert operations.
-    if (typeof op.insert !== 'string') {
-      throw new Error(`Unknown op: ${JSON.stringify(op)}`);
-    }
-
-    // If we have a line format, first apply that to the last line.
-    if (isLineFormatOp(op)) {
-      Object.entries(lineTypeAttributes).forEach(([attrName, fn]) => {
-        if (op.attributes.hasOwnProperty(attrName)) {
-          lines[lines.length - 1].type = fn(op.attributes[attrName]);
-        }
-      });
-    }
-
-    // Add a line for each line in the insert.
-    let [insert, ...nextLines] = op.insert.split('\n');
-
-    // Apply any attributes.
-    // Note that operations with attributes never contain newlines,
-    // so we only have to consider the first part of the split here.
-    Object.entries(booleanAttributes).forEach(([attrName, fn]) => {
-      if (op.attributes?.[attrName]) {
-        insert = fn(insert);
-      }
-    });
-
-    // Append the insert to the last line, and push the next lines.
-    lines[lines.length - 1].text += insert;
-    lines.push(...nextLines.map((l): Line => ({ text: l })));
+    nodes.push(parseOp(op));
   }
 
-  // Discard empty lines without type.
-  return lines.filter((l) => l.text !== '' || l.type);
+  return nodes;
 }
 
-function linesToHtml(lines: Line[]): string {
-  return lines
-    .map((l) => {
-      let tag = l.type ?? 'p';
-      return `<${tag}>${l.text}</${tag}>`;
-    })
-    .join('\n');
+function parseOp(op: Op): Node {
+  // Check if this is an element.
+  for (const key in attributeToElement) {
+    if (op.attributes?.hasOwnProperty(key)) {
+      const elem = attributeToElement[key](op.attributes[key], op.attributes);
+
+      return elem;
+    }
+  }
+
+  // If nothing matched, this is simply a text node.
+  return new TextNode(op.insert);
 }
+
+// function linesToHtml(lines: Line[]): string {
+//   let stack: string[] = [];
+//
+//   return lines
+//     .flatMap((l) => {
+//       let tag = 'p';
+//       let preTags: string[] = [];
+//
+//       if (l.type === 'ul' || l.type === 'ol') {
+//         tag = 'li';
+//       }
+//
+//       const indent = (l.indent ?? 0) + 1;
+//
+//       // Remove items from the stack until the indent matches.
+//       while (stack.length > indent) {
+//         preTags.push(`</${stack.pop()}>`);
+//       }
+//
+//       // Check if we are starting a new type or indent.
+//       if (l.type !== stack[stack.length - 1] || indent > stack.length) {
+//         // If we are starting a new type on the same indent level,
+//         // close the previous tag.
+//         if (indent <= stack.length) {
+//           preTags.push(`</${stack.pop()}>`);
+//         }
+//
+//         preTags.push(`<${l.type}>`);
+//         stack.push(l.type);
+//       }
+//
+//       // Close and clear the indenting tags.
+//       // preTags.push(...stack.toReversed().map((t) => `</${t}>`));
+//       // stack = [];
+//
+//       return [...preTags, `<${tag}>${l.text}</${tag}>`];
+//     })
+//     .concat(stack.toReversed().map((t) => `</${t}>`))
+//     .join('\n');
+// }
