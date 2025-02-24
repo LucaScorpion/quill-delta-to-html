@@ -7,7 +7,7 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prettier": "prettier \"src/**/*.{ts,tsx,scss}\" --check",
+    "prettier": "prettier \"{lib,src}/**/*.{ts,tsx,scss}\" --check",
     "prettier:write": "npm run prettier -- --write"
   },
   "devDependencies": {
