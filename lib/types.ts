@@ -1,19 +1,39 @@
 export interface Delta {
-  ops: Op[];
+  ops: UnknownOp[];
 }
 
-export interface Op {
+export interface UnknownOp {
+  insert?: unknown;
+}
+
+export type Op = InsertOp | LineFormatOp;
+
+export interface InsertOp {
   insert: string;
-  attributes?: Attributes;
+  attributes?: TextAttributes;
 }
 
-export interface Attributes extends Record<string, unknown> {
-  bold?: string;
+export function isInsertOp(op: Op): op is InsertOp {
+  return !isLineFormatOp(op);
+}
+
+export interface LineFormatOp {
+  insert: '\n';
+  attributes: LineAttributes;
+}
+
+export function isLineFormatOp(op: Op): op is LineFormatOp {
+  return op.insert === '\n' && 'attributes' in op;
+}
+
+export interface TextAttributes extends Record<string, unknown> {
+  bold?: boolean;
   italic?: boolean;
   underline?: boolean;
-  header?: number;
-  list?: ListType;
   link?: string;
 }
 
-export type ListType = 'ordered' | 'bullet';
+export interface LineAttributes extends Record<string, unknown> {
+  header?: number;
+  list?: 'ordered' | 'bullet';
+}
