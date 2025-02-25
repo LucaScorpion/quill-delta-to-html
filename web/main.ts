@@ -46,6 +46,12 @@ function update(): void {
   hljs.highlightElement(htmlOutput);
 }
 
+document.getElementById('paste-delta')!.addEventListener('click', () => {
+  navigator.clipboard.readText().then((t) => {
+    quill.setContents(JSON.parse(t));
+  });
+});
+
 document.getElementById('show-html-code')!.addEventListener('click', () => {
   htmlOutput.classList.remove('hidden');
   htmlPreview.classList.add('hidden');
