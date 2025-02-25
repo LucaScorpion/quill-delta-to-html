@@ -2,6 +2,8 @@
 
 [![Build](https://github.com/LucaScorpion/quill-delta-to-html/actions/workflows/build.yml/badge.svg)](https://github.com/LucaScorpion/quill-delta-to-html/actions/workflows/build.yml)
 
+[![npm](https://npmbadge.com/npm/@luca_scorpion/quill-delta-to-html)](https://www.npmjs.com/package/@luca_scorpion/quill-delta-to-html)
+
 A simple package that converts output from the [Quill editor](https://quilljs.com)
 (the [Delta](https://quilljs.com/docs/delta) format) to HTML.
 
