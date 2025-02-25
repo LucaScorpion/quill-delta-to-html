@@ -9,12 +9,12 @@ import {
 } from './delta.ts';
 
 export interface Line {
-  items: (Text | ImageInsert)[];
+  items: (TextInsert | ImageInsert)[];
   attributes: LineAttributes & StyleAttributes;
   indent: number;
 }
 
-export interface Text {
+export interface TextInsert {
   value: string;
   attributes: TextAttributes & StyleAttributes;
 }

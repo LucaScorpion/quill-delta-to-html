@@ -10,22 +10,16 @@ import { Script } from './script.ts';
 import { LineAttribute, TextAttribute } from '../delta.ts';
 import { Element } from './element.ts';
 
-export type Node = TextNode | Element;
-
-export class TextNode {
-  public constructor(public readonly text: string) {}
-
-  public getHtml(): string {
-    return this.text;
-  }
-}
-
 type ElemFromAttr = (value: unknown) => Element;
 
-export const lineAttributeToElement: Record<LineAttribute, ElemFromAttr> = {
+export const lineAttributeToElement: Record<
+  LineAttribute,
+  ElemFromAttr | undefined
+> = {
   header: Header.fromAttr,
   list: ListItem.fromAttr,
   blockquote: always(Blockquote),
+  indent: undefined,
 };
 
 export const textAttributeToElement: Record<TextAttribute, ElemFromAttr> = {

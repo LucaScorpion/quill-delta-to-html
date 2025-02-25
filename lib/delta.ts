@@ -45,6 +45,7 @@ export interface LineAttributes {
   blockquote?: boolean;
   header?: number;
   list?: string;
+  indent?: number;
 }
 
 export type LineAttribute = keyof LineAttributes;
@@ -53,7 +54,6 @@ export interface StyleAttributes {
   align?: string;
   background?: string;
   color?: string;
-  indent?: number;
 }
 
 export type StyleAttribute = keyof StyleAttributes;

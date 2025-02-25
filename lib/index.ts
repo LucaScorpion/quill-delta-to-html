@@ -6,39 +6,36 @@ import {
   Op,
   TextAttribute,
 } from './delta.ts';
-import {
-  lineAttributeToElement,
-  Node,
-  textAttributeToElement,
-  TextNode,
-} from './nodes';
-import { Line, opsToLines, Text } from './line.ts';
-import { Element } from './nodes/element.ts';
-import { Paragraph } from './nodes/paragraph.ts';
-import { List, ListItem } from './nodes/list.ts';
-import { Image } from './nodes/image.ts';
+import { lineAttributeToElement, textAttributeToElement } from './elements';
+import { Line, opsToLines, TextInsert } from './line.ts';
+import { Element } from './elements/element.ts';
+import { Paragraph } from './elements/paragraph.ts';
+import { List, ListItem } from './elements/list.ts';
+import { Image } from './elements/image.ts';
+import { Text } from './elements/text.ts';
+import { stylesFromAttributes } from './styles';
 
 export function deltaToHtml(delta: Delta): string {
   const ops = delta.ops as Op[];
   const lines = opsToLines(ops);
-  const [nodes, consumed] = linesToNodes(lines);
+  const [elements, consumed] = linesToElements(lines);
 
   if (consumed < lines.length) {
     console.warn(`Did not consume all lines: ${consumed}/${lines.length}`);
   }
 
-  return nodesToHtml(combineListNodes(nodes));
+  return elementsToHtml(combineListElements(elements));
 }
 
 interface LineContext {
   indent: number;
 }
 
-function linesToNodes(
+function linesToElements(
   lines: Line[],
   ctx: LineContext = { indent: 0 },
-): [Node[], number] {
-  const nodes: Node[] = [];
+): [Element[], number] {
+  const elements: Element[] = [];
 
   let i = 0;
   while (i < lines.length) {
@@ -51,106 +48,102 @@ function linesToNodes(
 
     // If we're going up an indent, parse the indented lines.
     if (line.indent > ctx.indent) {
-      const [indentedNodes, consumed] = linesToNodes(lines.slice(i), {
+      const [indentedElems, consumed] = linesToElements(lines.slice(i), {
         indent: line.indent,
       });
       i += consumed;
 
-      // Append indented nodes to the last element's children while possible.
-      const lastNode = nodes[nodes.length - 1];
-      if (lastNode instanceof Element) {
+      // Append indented elements to the last element's children while possible.
+      const lastElem = elements[elements.length - 1];
+      if (lastElem) {
         while (
-          indentedNodes.length > 0 &&
-          lastNode.canAppendChild(indentedNodes[0])
+          indentedElems.length > 0 &&
+          lastElem.canAppendChild(indentedElems[0])
         ) {
-          lastNode.children.push(...indentedNodes.splice(0, 1));
+          lastElem.children.push(...indentedElems.splice(0, 1));
         }
       }
 
-      // Append the remaining indented nodes as siblings.
-      nodes.push(...indentedNodes);
+      // Append the remaining indented elements as siblings.
+      elements.push(...indentedElems);
 
       continue;
     }
 
     // If we're staying at the same indent, add to the siblings.
     i++;
-    nodes.push(lineToElement(line));
+    elements.push(lineToElement(line));
   }
 
-  return [nodes, i];
+  return [elements, i];
 }
 
 function lineToElement(line: Line): Element {
-  const children = line.items.map((t) => lineItemToNode(t));
+  const children = line.items.map((t) => lineItemToElement(t));
 
   // Check if this is an element.
   for (const [key, fn] of Object.entries(lineAttributeToElement)) {
-    if (line.attributes.hasOwnProperty(key)) {
-      const elem = fn(line.attributes[key as LineAttribute]);
-      elem.children = children;
-      return elem;
+    if (line.attributes.hasOwnProperty(key) && fn) {
+      return fn(line.attributes[key as LineAttribute])
+        .withChildren(children)
+        .withStyles(stylesFromAttributes(line.attributes));
     }
   }
 
   // If nothing matched, return a paragraph.
-  return new Paragraph(children);
+  return new Paragraph().withChildren(children);
 }
 
-function lineItemToNode(value: Text | ImageInsert): Node {
+function lineItemToElement(value: TextInsert | ImageInsert): Element {
   if (isImage(value)) {
     return new Image(value.image);
   }
 
-  let node: Node = new TextNode(value.value);
+  let elem: Element = new Text(value.value);
 
   for (const [key, fn] of Object.entries(textAttributeToElement)) {
     if (value.attributes.hasOwnProperty(key)) {
-      const wrappingNode = fn(value.attributes[key as TextAttribute]);
-      wrappingNode.children = [node];
-      node = wrappingNode;
+      elem = fn(value.attributes[key as TextAttribute]).withChildren([elem]);
     }
   }
 
-  return node;
+  return elem.withStyles(stylesFromAttributes(value.attributes));
 }
 
-function combineListNodes(nodes: Node[]): Node[] {
+function combineListElements(elements: Element[]): Element[] {
   // First go over all children, working from the bottom up.
-  nodes
-    .filter((n) => n instanceof Element)
-    .forEach((n) => {
-      n.children = combineListNodes(n.children);
-    });
+  elements.forEach((n) => {
+    n.children = combineListElements(n.children);
+  });
 
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
+  for (let i = 0; i < elements.length; i++) {
+    const elem = elements[i];
 
-    if (node instanceof ListItem) {
+    if (elem instanceof ListItem) {
       // Find all following list items with matching type.
       let count = 1;
       while (true) {
-        if (i + count >= nodes.length) {
+        if (i + count >= elements.length) {
           break;
         }
 
-        const nextNode = nodes[i + count];
-        if (!(nextNode instanceof ListItem) || nextNode.type !== node.type) {
+        const nextElem = elements[i + count];
+        if (!(nextElem instanceof ListItem) || nextElem.type !== elem.type) {
           break;
         }
 
         count++;
       }
 
-      // Create a list node, and replace the list items with it.
-      const wrappingNode = new List(node.type);
-      wrappingNode.children = nodes.splice(i, count, wrappingNode);
+      // Create a list element, and replace the list items with it.
+      const wrapper = new List(elem.type);
+      wrapper.children = elements.splice(i, count, wrapper);
     }
   }
 
-  return nodes;
+  return elements;
 }
 
-function nodesToHtml(nodes: Node[]): string {
-  return nodes.map((node: Node) => node.getHtml()).join('\n');
+function elementsToHtml(elements: Element[]): string {
+  return elements.map((node) => node.getHtml()).join('\n');
 }

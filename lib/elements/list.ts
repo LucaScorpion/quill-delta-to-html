@@ -1,5 +1,4 @@
-import { Element, BlockElement } from './element.ts';
-import { Node } from './index.ts';
+import { BlockElement, Element } from './element.ts';
 
 type ListType = 'ordered' | 'bullet';
 
@@ -15,8 +14,8 @@ export class ListItem extends Element {
     return new ListItem(value);
   }
 
-  public canAppendChild(node: Node): boolean {
-    return node instanceof ListItem;
+  public canAppendChild(elem: Element): boolean {
+    return elem instanceof ListItem;
   }
 }
 
