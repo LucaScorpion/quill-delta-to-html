@@ -1,4 +1,5 @@
 import { BaseElement, BlockElement } from './base.ts';
+import { Node } from './index.ts';
 
 type ListType = 'ordered' | 'bullet';
 
@@ -12,6 +13,10 @@ export class ListItem extends BaseElement {
       throw new Error('List attribute must specify a valid list type.');
     }
     return new ListItem(value);
+  }
+
+  public canAppendChild(node: Node): boolean {
+    return node instanceof ListItem;
   }
 }
 

@@ -14,6 +14,10 @@ export abstract class BaseElement {
       .replaceAll('"', '&quot;');
   }
 
+  public canAppendChild(_: Node): boolean {
+    return false;
+  }
+
   public getHtml(): string {
     const joiner = this.newlinesInHtml ? '\n' : '';
     const childrenHtml = this.children.map((n) => n.getHtml()).join(joiner);

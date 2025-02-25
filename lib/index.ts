@@ -1,5 +1,5 @@
 import { Delta, ImageInsert, isImage, Op } from './delta.ts';
-import { attributeToElement, Node, TextNode } from './nodes';
+import { attributeToElement, Element, Node, TextNode } from './nodes';
 import { Line, opsToLines, Text } from './line.ts';
 import { BaseElement } from './nodes/base.ts';
 import { Paragraph } from './nodes/paragraph.ts';
@@ -37,33 +37,39 @@ function linesToNodes(
       break;
     }
 
-    // If we're going up an indent, append to the last node's children.
+    // If we're going up an indent, parse the indented lines.
     if (line.indent > ctx.indent) {
-      const [children, consumed] = linesToNodes(lines.slice(i), {
-        indent: line.indent + ctx.indent,
+      const [indentedNodes, consumed] = linesToNodes(lines.slice(i), {
+        indent: line.indent,
       });
       i += consumed;
 
+      // Append indented nodes to the last element's children while possible.
       const lastNode = nodes[nodes.length - 1];
       if (lastNode instanceof BaseElement) {
-        lastNode.children.push(...children);
-      } else {
-        console.warn('Could not append children to last node.');
-        nodes.push(...children);
+        while (
+          indentedNodes.length > 0 &&
+          lastNode.canAppendChild(indentedNodes[0])
+        ) {
+          lastNode.children.push(...indentedNodes.splice(0, 1));
+        }
       }
+
+      // Append the remaining indented nodes as siblings.
+      nodes.push(...indentedNodes);
 
       continue;
     }
 
     // If we're staying at the same indent, add to the siblings.
     i++;
-    nodes.push(...lineToNodes(line, ctx));
+    nodes.push(lineToElement(line));
   }
 
   return [nodes, i];
 }
 
-function lineToNodes(line: Line, ctx: LineContext): Node[] {
+function lineToElement(line: Line): Element {
   const children = line.items.map((t) => lineItemToNode(t));
 
   // Check if this is an element.
@@ -76,19 +82,12 @@ function lineToNodes(line: Line, ctx: LineContext): Node[] {
 
       elem.children = children;
 
-      return [elem];
+      return elem;
     }
   }
 
-  // If we are at the root, return a paragraph with the text nodes.
-  if (ctx.indent === 0) {
-    const p = new Paragraph();
-    p.children = children;
-    return [p];
-  }
-
-  // Otherwise, just return the text nodes.
-  return children;
+  // If nothing matched, return a paragraph.
+  return new Paragraph(children);
 }
 
 function lineItemToNode(value: Text | ImageInsert): Node {
