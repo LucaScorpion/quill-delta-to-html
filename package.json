@@ -20,7 +20,7 @@
     "preview": "vite preview",
     "lint": "npm run prettier",
     "format": "npm run prettier:write",
-    "prettier": "prettier \"{lib,src,test}/**/*.{ts,tsx,scss}\" --check",
+    "prettier": "prettier \"{src,web,test}/**/*.{ts,tsx,scss,html}\" --check",
     "prettier:write": "npm run prettier -- --write",
     "test": "jest"
   },

@@ -8,6 +8,10 @@ export interface UnknownOp {
 
 export type Op = InsertOp | LineFormatOp;
 
+export function isOp(value: UnknownOp): value is Op {
+  return typeof value.insert === 'string' || isImage(value.insert);
+}
+
 export interface InsertOp {
   insert: string | ImageInsert;
   attributes?: TextAttributes & StyleAttributes;

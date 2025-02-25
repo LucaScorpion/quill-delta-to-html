@@ -2,6 +2,7 @@ import {
   Delta,
   ImageInsert,
   isImage,
+  isOp,
   LineAttribute,
   Op,
   TextAttribute,
@@ -17,7 +18,7 @@ import { stylesFromAttributes } from './styles';
 
 export function deltaToHtml(delta: Delta): string {
   // Validate that all operations are inserts.
-  if (delta.ops.find((op) => typeof op.insert !== 'string')) {
+  if (delta.ops.find((op) => !isOp(op))) {
     throw new Error('Delta should only contain insert operations.');
   }
 

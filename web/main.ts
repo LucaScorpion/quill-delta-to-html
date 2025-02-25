@@ -28,6 +28,7 @@ const quill = new Quill('#editor', {
 
 const deltaOutput = document.getElementById('delta')!;
 const htmlOutput = document.getElementById('html')!;
+const htmlPreview = document.getElementById('html-preview')!;
 
 update();
 quill.on('text-change', update);
@@ -35,10 +36,22 @@ quill.on('text-change', update);
 function update(): void {
   const delta = quill.getContents();
   deltaOutput.textContent = JSON.stringify(delta, null, 2);
-  htmlOutput.textContent = deltaToHtml(delta);
+  const generatedHtml = deltaToHtml(delta);
+  htmlOutput.textContent = generatedHtml;
+  htmlPreview.innerHTML = generatedHtml;
 
   deltaOutput.removeAttribute('data-highlighted');
   hljs.highlightElement(deltaOutput);
   htmlOutput.removeAttribute('data-highlighted');
   hljs.highlightElement(htmlOutput);
 }
+
+document.getElementById('show-html-code')!.addEventListener('click', () => {
+  htmlOutput.classList.remove('hidden');
+  htmlPreview.classList.add('hidden');
+});
+
+document.getElementById('show-html-preview')!.addEventListener('click', () => {
+  htmlOutput.classList.add('hidden');
+  htmlPreview.classList.remove('hidden');
+});

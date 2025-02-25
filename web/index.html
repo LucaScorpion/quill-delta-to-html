@@ -7,19 +7,37 @@
   </head>
   <body>
     <div id="app">
-      <div>
-        <h2>Quill editor</h2>
-        <div id="editor"></div>
-      </div>
+      <h1>Quill Delta to HTML</h1>
+      <p>
+        A simple package that converts output from the
+        <a href="https://quilljs.com">Quill editor</a> (the
+        <a href="https://quilljs.com/docs/delta">Delta</a> format) to HTML. See
+        the full readme and source code on GitHub:
+        <a href="https://github.com/LucaScorpion/quill-delta-to-html"
+          >LucaScorpion/quill-delta-to-html</a
+        >.
+      </p>
 
-      <div>
-        <h2>Delta output</h2>
-        <code id="delta" class="language-json"></code>
-      </div>
+      <div class="panels">
+        <div>
+          <h2>Quill editor</h2>
+          <div id="editor"></div>
+        </div>
 
-      <div>
-        <h2>Generated HTML</h2>
-        <code id="html" class="language-html"></code>
+        <div>
+          <h2>Delta output</h2>
+          <code id="delta" class="language-json block"></code>
+        </div>
+
+        <div>
+          <h2>Generated HTML</h2>
+          <div class="toolbar">
+            <button id="show-html-code">Code</button>
+            <button id="show-html-preview">Preview</button>
+          </div>
+          <code id="html" class="language-html block"></code>
+          <div id="html-preview" class="block hidden"></div>
+        </div>
       </div>
     </div>
     <script type="module" src="/main.ts"></script>
