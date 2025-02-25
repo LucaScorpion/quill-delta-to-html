@@ -5,6 +5,7 @@ import { LineAttributes } from '../delta.ts';
 import { Bold } from './bold.ts';
 import { Italic } from './italic.ts';
 import { Underline } from './underline.ts';
+import { Link } from './link.ts';
 
 export type Node = TextNode | Element;
 
@@ -22,6 +23,7 @@ type ElemFromAttr = (value: unknown, attrs: LineAttributes) => Element;
 
 export const attributeToElement: Record<string, ElemFromAttr> = {
   header: Header.fromAttr,
+  link: Link.fromAttr,
   list: ListItem.fromAttr,
 
   bold: always(Bold),
