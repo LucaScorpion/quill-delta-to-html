@@ -4,7 +4,7 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/default.min.css';
-import { deltaToHtml } from '../lib';
+import { deltaToHtml } from '../src';
 
 const quill = new Quill('#editor', {
   theme: 'snow',

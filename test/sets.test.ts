@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { deltaToHtml } from '../lib';
-import { Delta } from '../lib/delta';
+import { deltaToHtml } from '../src';
+import { Delta } from '../src/delta';
 
 describe('sets', () => {
   const setsDir = path.resolve(__dirname, 'sets');

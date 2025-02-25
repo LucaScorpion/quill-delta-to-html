@@ -1,4 +1,4 @@
-import { BlockElement, Element } from './element.ts';
+import { BlockElement, Element } from './element';
 
 type ListType = 'ordered' | 'bullet';
 

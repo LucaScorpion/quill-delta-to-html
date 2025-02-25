@@ -5,14 +5,14 @@ import {
   LineAttribute,
   Op,
   TextAttribute,
-} from './delta.ts';
+} from './delta';
 import { lineAttributeToElement, textAttributeToElement } from './elements';
-import { Line, opsToLines, TextInsert } from './line.ts';
-import { Element } from './elements/element.ts';
-import { Paragraph } from './elements/paragraph.ts';
-import { List, ListItem } from './elements/list.ts';
-import { Image } from './elements/image.ts';
-import { Text } from './elements/text.ts';
+import { Line, opsToLines, TextInsert } from './line';
+import { Element } from './elements/element';
+import { Paragraph } from './elements/paragraph';
+import { List, ListItem } from './elements/list';
+import { Image } from './elements/image';
+import { Text } from './elements/text';
 import { stylesFromAttributes } from './styles';
 
 export function deltaToHtml(delta: Delta): string {

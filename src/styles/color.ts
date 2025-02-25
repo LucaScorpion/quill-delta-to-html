@@ -1,4 +1,4 @@
-import { Style } from './style.ts';
+import { Style } from './style';
 
 export class Color extends Style {
   public constructor(color: string) {

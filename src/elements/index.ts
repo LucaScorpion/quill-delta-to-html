@@ -1,14 +1,14 @@
-import { Header } from './header.ts';
-import { ListItem } from './list.ts';
-import { Bold } from './bold.ts';
-import { Italic } from './italic.ts';
-import { Underline } from './underline.ts';
-import { Link } from './link.ts';
-import { Strike } from './strike.ts';
-import { Blockquote } from './blockquote.ts';
-import { Script } from './script.ts';
-import { LineAttribute, TextAttribute } from '../delta.ts';
-import { Element } from './element.ts';
+import { Header } from './header';
+import { ListItem } from './list';
+import { Bold } from './bold';
+import { Italic } from './italic';
+import { Underline } from './underline';
+import { Link } from './link';
+import { Strike } from './strike';
+import { Blockquote } from './blockquote';
+import { Script } from './script';
+import { LineAttribute, TextAttribute } from '../delta';
+import { Element } from './element';
 
 type ElemFromAttr = (value: unknown) => Element;
 

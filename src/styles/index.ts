@@ -1,8 +1,8 @@
-import { StyleAttribute, StyleAttributes } from '../delta.ts';
-import { Align } from './align.ts';
-import { Style } from './style.ts';
-import { Color } from './color.ts';
-import { Background } from './background.ts';
+import { StyleAttribute, StyleAttributes } from '../delta';
+import { Align } from './align';
+import { Style } from './style';
+import { Color } from './color';
+import { Background } from './background';
 
 type StyleFromAttr = (value: unknown) => Style;
 

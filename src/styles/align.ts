@@ -1,4 +1,4 @@
-import { Style } from './style.ts';
+import { Style } from './style';
 
 type AlignType = 'left' | 'center' | 'right' | 'justify';
 

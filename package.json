@@ -1,10 +1,19 @@
 {
-  "name": "quill-delta-to-html",
+  "name": "@luca_scorpion/quill-delta-to-html",
   "version": "0.1.0",
   "type": "module",
+  "homepage": "https://github.com/LucaScorpion/quill-delta-to-html#readme",
+  "bugs": {
+    "url": "https://github.com/LucaScorpion/quill-delta-to-html/issues"
+  },
+  "license": "MIT",
+  "author": "Luca Scalzotto (https://github.com/LucaScorpion)",
+  "repository": "github:LucaScorpion/quill-delta-to-html",
+  "main": "dist/index.js",
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc",
+    "build:web": "tsc -p tsconfig.web.json && vite build",
     "preview": "vite preview",
     "lint": "npm run prettier",
     "format": "npm run prettier:write",

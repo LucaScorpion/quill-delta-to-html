@@ -6,7 +6,7 @@ import {
   Op,
   StyleAttributes,
   TextAttributes,
-} from './delta.ts';
+} from './delta';
 
 export interface Line {
   items: (TextInsert | ImageInsert)[];

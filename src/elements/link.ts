@@ -1,4 +1,4 @@
-import { Element } from './element.ts';
+import { Element } from './element';
 
 export class Link extends Element {
   public constructor(link: string) {

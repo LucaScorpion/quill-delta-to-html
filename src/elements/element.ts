@@ -1,4 +1,4 @@
-import { Style } from '../styles/style.ts';
+import { Style } from '../styles/style';
 
 export abstract class Element {
   public children: Element[] = [];

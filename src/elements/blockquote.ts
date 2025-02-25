@@ -1,4 +1,4 @@
-import { BlockElement } from './element.ts';
+import { BlockElement } from './element';
 
 export class Blockquote extends BlockElement {
   public constructor() {
