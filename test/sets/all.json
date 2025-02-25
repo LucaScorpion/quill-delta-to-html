@@ -1,0 +1,43 @@
+{
+  "ops": [
+    {
+      "insert": "Heading one"
+    },
+    {
+      "attributes": {
+        "header": 1
+      },
+      "insert": "\n"
+    },
+    {
+      "insert": "The headening"
+    },
+    {
+      "attributes": {
+        "header": 2
+      },
+      "insert": "\n"
+    },
+    {
+      "insert": "Header the third"
+    },
+    {
+      "attributes": {
+        "header": 3
+      },
+      "insert": "\n"
+    },
+    {
+      "insert": "And finally a "
+    },
+    {
+      "attributes": {
+        "italic": true
+      },
+      "insert": "paragraph"
+    },
+    {
+      "insert": ".\n"
+    }
+  ]
+}
