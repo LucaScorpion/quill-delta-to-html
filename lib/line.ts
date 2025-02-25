@@ -1,7 +1,13 @@
-import { LineAttributes, Op, TextAttributes } from './delta.ts';
+import {
+  ImageInsert,
+  isImage,
+  LineAttributes,
+  Op,
+  TextAttributes,
+} from './delta.ts';
 
 export interface Line {
-  text: Text[];
+  items: (Text | ImageInsert)[];
   attributes: LineAttributes;
   indent: number;
 }
@@ -31,11 +37,17 @@ export function opsToLines(ops: Op[]): Line[] {
       continue;
     }
 
+    // If the insert is an image, add it to the current line.
+    if (isImage(op.insert)) {
+      lines[lines.length - 1].items.push(op.insert);
+      continue;
+    }
+
     let [first, ...nextLines] = op.insert.split('\n');
 
     // Add the first text part to the current line.
     if (first) {
-      lines[lines.length - 1].text.push({
+      lines[lines.length - 1].items.push({
         value: first,
         attributes: op.attributes ?? {},
       });
@@ -49,14 +61,14 @@ export function opsToLines(ops: Op[]): Line[] {
 
   // Discard empty lines.
   return lines.filter(
-    (l) => l.text.length > 0 || Object.keys(l.attributes).length > 0,
+    (l) => l.items.length > 0 || Object.keys(l.attributes).length > 0,
   );
 }
 
 function newLine(text?: string): Line {
-  const l: Line = { text: [], attributes: {}, indent: 0 };
+  const l: Line = { items: [], attributes: {}, indent: 0 };
   if (text) {
-    l.text.push({ value: text, attributes: {} });
+    l.items.push({ value: text, attributes: {} });
   }
   return l;
 }

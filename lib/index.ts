@@ -1,9 +1,10 @@
-import { Delta, Op } from './delta.ts';
+import { Delta, ImageInsert, isImage, Op } from './delta.ts';
 import { attributeToElement, Node, TextNode } from './nodes';
 import { Line, opsToLines, Text } from './line.ts';
 import { BaseElement } from './nodes/base.ts';
 import { Paragraph } from './nodes/paragraph.ts';
 import { List, ListItem } from './nodes/list.ts';
+import { Image } from './nodes/image.ts';
 
 export function deltaToHtml(delta: Delta): string {
   const ops = delta.ops as Op[];
@@ -63,7 +64,7 @@ function linesToNodes(
 }
 
 function lineToNodes(line: Line, ctx: LineContext): Node[] {
-  const children = line.text.map((t) => textToNode(t));
+  const children = line.items.map((t) => lineItemToNode(t));
 
   // Check if this is an element.
   for (const key in attributeToElement) {
@@ -90,14 +91,18 @@ function lineToNodes(line: Line, ctx: LineContext): Node[] {
   return children;
 }
 
-function textToNode(text: Text): Node {
-  let node: Node = new TextNode(text.value);
+function lineItemToNode(value: Text | ImageInsert): Node {
+  if (isImage(value)) {
+    return new Image(value.image);
+  }
 
-  for (const key in text.attributes) {
+  let node: Node = new TextNode(value.value);
+
+  for (const key in value.attributes) {
     if (attributeToElement[key]) {
       const wrappingNode = attributeToElement[key](
-        text.attributes[key],
-        text.attributes,
+        value.attributes[key],
+        value.attributes,
       );
       wrappingNode.children = [node];
 

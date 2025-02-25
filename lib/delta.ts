@@ -9,8 +9,16 @@ export interface UnknownOp {
 export type Op = InsertOp | LineFormatOp;
 
 export interface InsertOp {
-  insert: string;
+  insert: string | ImageInsert;
   attributes?: TextAttributes;
+}
+
+export interface ImageInsert {
+  image: string;
+}
+
+export function isImage(value: unknown): value is ImageInsert {
+  return !!value && typeof value === 'object' && 'image' in value;
 }
 
 export interface LineFormatOp {
