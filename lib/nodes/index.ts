@@ -8,6 +8,7 @@ import { Underline } from './underline.ts';
 import { Link } from './link.ts';
 import { Strike } from './strike.ts';
 import { Blockquote } from './blockquote.ts';
+import { Script } from './script.ts';
 
 export type Node = TextNode | Element;
 
@@ -27,6 +28,7 @@ export const attributeToElement: Record<string, ElemFromAttr> = {
   header: Header.fromAttr,
   link: Link.fromAttr,
   list: ListItem.fromAttr,
+  script: Script.fromAttr,
 
   blockquote: always(Blockquote),
   bold: always(Bold),

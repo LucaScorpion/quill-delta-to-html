@@ -8,10 +8,7 @@ export class ListItem extends BaseElement {
   }
 
   public static fromAttr(value: unknown): ListItem {
-    if (
-      typeof value !== 'string' ||
-      (value !== 'ordered' && value !== 'bullet')
-    ) {
+    if (value !== 'ordered' && value !== 'bullet') {
       throw new Error('List attribute must specify a valid list type.');
     }
     return new ListItem(value);
