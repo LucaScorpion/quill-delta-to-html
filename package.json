@@ -1,12 +1,12 @@
 {
   "name": "quill-delta-to-html",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "lint": "npm run prettier",
     "format": "npm run prettier:write",
     "prettier": "prettier \"{lib,src,test}/**/*.{ts,tsx,scss}\" --check",
     "prettier:write": "npm run prettier -- --write",
