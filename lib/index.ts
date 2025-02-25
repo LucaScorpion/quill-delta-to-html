@@ -3,6 +3,7 @@ import { attributeToElement, Node, TextNode } from './nodes';
 import { Line, opsToLines, Text } from './line.ts';
 import { BaseElement, BlockElement } from './nodes/base.ts';
 import { Paragraph } from './nodes/paragraph.ts';
+import { List, ListItem } from './nodes/list.ts';
 
 export function deltaToHtml(delta: Delta): string {
   const ops = delta.ops as Op[];
@@ -101,17 +102,52 @@ function textToNode(text: Text): Node {
 }
 
 function cleanupNodes(nodes: Node[]): Node[] {
-  return nodes.map((n) => {
-    // Wrap root-level non-block elements in paragraphs.
-    if (!(n instanceof BlockElement)) {
-      const p = new Paragraph();
-      p.children = [n];
-      return p;
+  return combineListNodes(nodes).map((n) => {
+    if (n instanceof BlockElement) {
+      return n;
     }
-    return n;
-  });
 
-  // TODO: Fix lists
+    // Wrap root-level non-block elements in paragraphs.
+    const p = new Paragraph();
+    p.children = [n];
+    return p;
+  });
+}
+
+function combineListNodes(nodes: Node[]): Node[] {
+  // First go over all children, working from the bottom up.
+  nodes
+    .filter((n) => n instanceof BaseElement)
+    .forEach((n) => {
+      n.children = combineListNodes(n.children);
+    });
+
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+
+    if (node instanceof ListItem) {
+      // Find all following list items with matching type.
+      let count = 1;
+      while (true) {
+        if (i + count >= nodes.length) {
+          break;
+        }
+
+        const nextNode = nodes[i + count];
+        if (!(nextNode instanceof ListItem) || nextNode.type !== node.type) {
+          break;
+        }
+
+        count++;
+      }
+
+      // Create a list node, and replace the list items with it.
+      const wrappingNode = new List(node.type);
+      wrappingNode.children = nodes.splice(i, count, wrappingNode);
+    }
+  }
+
+  return nodes;
 }
 
 function nodesToHtml(nodes: Node[]): string {

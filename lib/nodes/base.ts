@@ -2,11 +2,13 @@ import { Node } from './index.ts';
 
 export abstract class BaseElement {
   public children: Node[] = [];
+  protected newlinesInHtml = false;
 
   protected constructor(public readonly tag: string) {}
 
   public getHtml(): string {
-    return `<${this.tag}>${this.children.map((n) => n.getHtml()).join('')}</${this.tag}>`;
+    const joiner = this.newlinesInHtml ? '\n' : '';
+    return `<${this.tag}>${joiner}${this.children.map((n) => n.getHtml()).join(joiner)}${joiner}</${this.tag}>`;
   }
 }
 
