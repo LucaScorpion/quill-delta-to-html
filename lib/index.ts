@@ -1,7 +1,7 @@
 import { Delta, Op } from './delta.ts';
 import { attributeToElement, Node, TextNode } from './nodes';
 import { Line, opsToLines, Text } from './line.ts';
-import { BaseElement, BlockElement } from './nodes/base.ts';
+import { BaseElement } from './nodes/base.ts';
 import { Paragraph } from './nodes/paragraph.ts';
 import { List, ListItem } from './nodes/list.ts';
 
@@ -14,7 +14,7 @@ export function deltaToHtml(delta: Delta): string {
     console.warn(`Did not consume all lines: ${consumed}/${lines.length}`);
   }
 
-  return nodesToHtml(cleanupNodes(nodes));
+  return nodesToHtml(combineListNodes(nodes));
 }
 
 interface LineContext {
@@ -56,13 +56,13 @@ function linesToNodes(
 
     // If we're staying at the same indent, add to the siblings.
     i++;
-    nodes.push(...lineToNodes(line));
+    nodes.push(...lineToNodes(line, ctx));
   }
 
   return [nodes, i];
 }
 
-function lineToNodes(line: Line): Node[] {
+function lineToNodes(line: Line, ctx: LineContext): Node[] {
   const children = line.text.map((t) => textToNode(t));
 
   // Check if this is an element.
@@ -79,7 +79,14 @@ function lineToNodes(line: Line): Node[] {
     }
   }
 
-  // If no element matched, simply return the child nodes.
+  // If we are at the root, return a paragraph with the text nodes.
+  if (ctx.indent === 0) {
+    const p = new Paragraph();
+    p.children = children;
+    return [p];
+  }
+
+  // Otherwise, just return the text nodes.
   return children;
 }
 
@@ -99,19 +106,6 @@ function textToNode(text: Text): Node {
   }
 
   return node;
-}
-
-function cleanupNodes(nodes: Node[]): Node[] {
-  return combineListNodes(nodes).map((n) => {
-    if (n instanceof BlockElement) {
-      return n;
-    }
-
-    // Wrap root-level non-block elements in paragraphs.
-    const p = new Paragraph();
-    p.children = [n];
-    return p;
-  });
 }
 
 function combineListNodes(nodes: Node[]): Node[] {
