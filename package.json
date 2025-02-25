@@ -15,6 +15,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "vite",
+    "prepack": "npm run build",
     "build": "tsc",
     "build:web": "tsc -p tsconfig.web.json && vite build",
     "preview": "vite preview",
