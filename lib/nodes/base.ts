@@ -9,3 +9,5 @@ export abstract class BaseElement {
     return `<${this.tag}>${this.children.map((n) => n.getHtml()).join('')}</${this.tag}>`;
   }
 }
+
+export abstract class BlockElement extends BaseElement {}

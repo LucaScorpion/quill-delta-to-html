@@ -1,6 +1,6 @@
-import { BaseElement } from './base.ts';
+import { BlockElement } from './base.ts';
 
-export class Paragraph extends BaseElement {
+export class Paragraph extends BlockElement {
   public constructor() {
     super('p');
   }

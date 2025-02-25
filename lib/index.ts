@@ -1,7 +1,7 @@
 import { Delta, Op } from './delta.ts';
 import { attributeToElement, Node, TextNode } from './nodes';
 import { Line, opsToLines, Text } from './line.ts';
-import { BaseElement } from './nodes/base.ts';
+import { BaseElement, BlockElement } from './nodes/base.ts';
 import { Paragraph } from './nodes/paragraph.ts';
 
 export function deltaToHtml(delta: Delta): string {
@@ -102,60 +102,18 @@ function textToNode(text: Text): Node {
 
 function cleanupNodes(nodes: Node[]): Node[] {
   return nodes.map((n) => {
-    // Transform root-level text nodes to paragraph elements.
-    if (n instanceof TextNode) {
+    // Wrap root-level non-block elements in paragraphs.
+    if (!(n instanceof BlockElement)) {
       const p = new Paragraph();
       p.children = [n];
       return p;
     }
-
-    // TODO: Bold, italic, etc should also wrap in p.
-
     return n;
   });
+
+  // TODO: Fix lists
 }
 
 function nodesToHtml(nodes: Node[]): string {
   return nodes.map((node: Node) => node.getHtml()).join('\n');
 }
-
-// function linesToHtml(lines: Line[]): string {
-//   let stack: string[] = [];
-//
-//   return lines
-//     .flatMap((l) => {
-//       let tag = 'p';
-//       let preTags: string[] = [];
-//
-//       if (l.type === 'ul' || l.type === 'ol') {
-//         tag = 'li';
-//       }
-//
-//       const indent = (l.indent ?? 0) + 1;
-//
-//       // Remove items from the stack until the indent matches.
-//       while (stack.length > indent) {
-//         preTags.push(`</${stack.pop()}>`);
-//       }
-//
-//       // Check if we are starting a new type or indent.
-//       if (l.type !== stack[stack.length - 1] || indent > stack.length) {
-//         // If we are starting a new type on the same indent level,
-//         // close the previous tag.
-//         if (indent <= stack.length) {
-//           preTags.push(`</${stack.pop()}>`);
-//         }
-//
-//         preTags.push(`<${l.type}>`);
-//         stack.push(l.type);
-//       }
-//
-//       // Close and clear the indenting tags.
-//       // preTags.push(...stack.toReversed().map((t) => `</${t}>`));
-//       // stack = [];
-//
-//       return [...preTags, `<${tag}>${l.text}</${tag}>`];
-//     })
-//     .concat(stack.toReversed().map((t) => `</${t}>`))
-//     .join('\n');
-// }

@@ -1,6 +1,6 @@
-import { BaseElement } from './base.ts';
+import { BlockElement } from './base.ts';
 
-export class Header extends BaseElement {
+export class Header extends BlockElement {
   public constructor(header: number) {
     super(`h${header}`);
   }

@@ -1,8 +1,8 @@
-import { BaseElement } from './base.ts';
+import { BlockElement } from './base.ts';
 
 type ListType = 'ordered' | 'bullet';
 
-export class List extends BaseElement {
+export class List extends BlockElement {
   public constructor(list: ListType) {
     super(`${list === 'ordered' ? 'o' : 'u'}l`);
   }

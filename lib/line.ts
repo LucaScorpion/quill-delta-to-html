@@ -34,10 +34,12 @@ export function opsToLines(ops: Op[]): Line[] {
     let [first, ...nextLines] = op.insert.split('\n');
 
     // Add the first text part to the current line.
-    lines[lines.length - 1].text.push({
-      value: first,
-      attributes: op.attributes ?? {},
-    });
+    if (first) {
+      lines[lines.length - 1].text.push({
+        value: first,
+        attributes: op.attributes ?? {},
+      });
+    }
 
     // Store the other lines.
     nextLines.forEach((lineText) => {
