@@ -174,7 +174,25 @@
       "insert": "high"
     },
     {
-      "insert": "\nLet's"
+      "insert": "\nleft\nmiddle"
+    },
+    {
+      "attributes": {
+        "align": "center"
+      },
+      "insert": "\n"
+    },
+    {
+      "insert": "right"
+    },
+    {
+      "attributes": {
+        "align": "right"
+      },
+      "insert": "\n"
+    },
+    {
+      "insert": "Let's"
     },
     {
       "attributes": {

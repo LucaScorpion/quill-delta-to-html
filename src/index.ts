@@ -100,7 +100,9 @@ function lineToElement(line: Line): Element {
   }
 
   // If nothing matched, return a paragraph.
-  return new Paragraph().withChildren(children);
+  return new Paragraph()
+    .withChildren(children)
+    .withStyles(stylesFromAttributes(line.attributes));
 }
 
 function lineItemToElement(value: TextInsert | ImageInsert): Element {
