@@ -61,3 +61,11 @@ document.getElementById('show-html-preview')!.addEventListener('click', () => {
   htmlOutput.classList.add('hidden');
   htmlPreview.classList.remove('hidden');
 });
+
+document.getElementById('copy-delta')!.addEventListener('click', () => {
+  void navigator.clipboard.writeText(deltaOutput.textContent ?? '');
+});
+
+document.getElementById('copy-html-code')!.addEventListener('click', () => {
+  void navigator.clipboard.writeText(htmlOutput.textContent ?? '');
+});

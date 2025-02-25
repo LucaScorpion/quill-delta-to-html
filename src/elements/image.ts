@@ -5,4 +5,8 @@ export class Image extends Element {
     super('img');
     this.attributes.src = src;
   }
+
+  protected getCloseTag(): string {
+    return '';
+  }
 }
