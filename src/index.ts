@@ -16,15 +16,23 @@ import { Text } from './elements/text';
 import { stylesFromAttributes } from './styles';
 
 export function deltaToHtml(delta: Delta): string {
+  // Validate that all operations are inserts.
+  if (delta.ops.find((op) => typeof op.insert !== 'string')) {
+    throw new Error('Delta should only contain insert operations.');
+  }
+
   const ops = delta.ops as Op[];
   const lines = opsToLines(ops);
   const [elements, consumed] = linesToElements(lines);
 
+  // Check if we consumed everything.
   if (consumed < lines.length) {
     console.warn(`Did not consume all lines: ${consumed}/${lines.length}`);
   }
 
-  return elementsToHtml(combineListElements(elements));
+  return combineListElements(elements)
+    .map((node) => node.getHtml())
+    .join('\n');
 }
 
 interface LineContext {
@@ -142,8 +150,4 @@ function combineListElements(elements: Element[]): Element[] {
   }
 
   return elements;
-}
-
-function elementsToHtml(elements: Element[]): string {
-  return elements.map((node) => node.getHtml()).join('\n');
 }
