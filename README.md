@@ -5,6 +5,8 @@
 A simple package that converts output from the [Quill editor](https://quilljs.com)
 (the [Delta](https://quilljs.com/docs/delta) format) to HTML.
 
+See it in action: https://lucascorpion.github.io/quill-delta-to-html
+
 ## Installation and Usage
 
 Install the package using:
