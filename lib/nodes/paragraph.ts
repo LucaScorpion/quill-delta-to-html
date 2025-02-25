@@ -1,4 +1,4 @@
-import { BlockElement } from './base.ts';
+import { BlockElement } from './element.ts';
 import { Node } from './index.ts';
 
 export class Paragraph extends BlockElement {

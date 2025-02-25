@@ -1,6 +1,6 @@
-import { BaseElement } from './base.ts';
+import { Element } from './element.ts';
 
-export class Strike extends BaseElement {
+export class Strike extends Element {
   public constructor() {
     super('s');
   }

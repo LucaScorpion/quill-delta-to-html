@@ -1,9 +1,9 @@
-import { BaseElement, BlockElement } from './base.ts';
+import { Element, BlockElement } from './element.ts';
 import { Node } from './index.ts';
 
 type ListType = 'ordered' | 'bullet';
 
-export class ListItem extends BaseElement {
+export class ListItem extends Element {
   public constructor(public readonly type: ListType) {
     super('li');
   }

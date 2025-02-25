@@ -1,8 +1,8 @@
-import { BaseElement } from './base.ts';
+import { Element } from './element.ts';
 
 type ScriptType = 'sub' | 'super';
 
-export class Script extends BaseElement {
+export class Script extends Element {
   public constructor(type: ScriptType) {
     super(type.substring(0, 3));
   }

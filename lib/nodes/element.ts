@@ -1,6 +1,6 @@
 import { Node } from './index.ts';
 
-export abstract class BaseElement {
+export abstract class Element {
   public children: Node[] = [];
   protected newlinesInHtml = false;
   protected attributes: Record<string, string> = {};
@@ -27,13 +27,11 @@ export abstract class BaseElement {
 
   private getOpenTag(): string {
     const attrString = Object.entries(this.attributes)
-      .map(
-        ([key, value]) => `${key}="${BaseElement.escapeAttributeValue(value)}"`,
-      )
+      .map(([key, value]) => `${key}="${Element.escapeAttributeValue(value)}"`)
       .join(' ');
 
     return `<${this.tag}${attrString ? ' ' : ''}${attrString}>`;
   }
 }
 
-export abstract class BlockElement extends BaseElement {}
+export abstract class BlockElement extends Element {}

@@ -1,6 +1,6 @@
-import { BaseElement } from './base.ts';
+import { Element } from './element.ts';
 
-export class Italic extends BaseElement {
+export class Italic extends Element {
   public constructor() {
     super('i');
   }

@@ -1,6 +1,6 @@
-import { BaseElement } from './base.ts';
+import { Element } from './element.ts';
 
-export class Underline extends BaseElement {
+export class Underline extends Element {
   public constructor() {
     super('u');
   }

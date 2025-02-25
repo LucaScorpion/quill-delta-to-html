@@ -1,6 +1,6 @@
-import { BaseElement } from './base.ts';
+import { Element } from './element.ts';
 
-export class Link extends BaseElement {
+export class Link extends Element {
   public constructor(link: string) {
     super('a');
     this.attributes.href = link;

@@ -1,7 +1,19 @@
-import { Delta, ImageInsert, isImage, Op } from './delta.ts';
-import { attributeToElement, Element, Node, TextNode } from './nodes';
+import {
+  Delta,
+  ImageInsert,
+  isImage,
+  LineAttribute,
+  Op,
+  TextAttribute,
+} from './delta.ts';
+import {
+  lineAttributeToElement,
+  Node,
+  textAttributeToElement,
+  TextNode,
+} from './nodes';
 import { Line, opsToLines, Text } from './line.ts';
-import { BaseElement } from './nodes/base.ts';
+import { Element } from './nodes/element.ts';
 import { Paragraph } from './nodes/paragraph.ts';
 import { List, ListItem } from './nodes/list.ts';
 import { Image } from './nodes/image.ts';
@@ -46,7 +58,7 @@ function linesToNodes(
 
       // Append indented nodes to the last element's children while possible.
       const lastNode = nodes[nodes.length - 1];
-      if (lastNode instanceof BaseElement) {
+      if (lastNode instanceof Element) {
         while (
           indentedNodes.length > 0 &&
           lastNode.canAppendChild(indentedNodes[0])
@@ -73,15 +85,10 @@ function lineToElement(line: Line): Element {
   const children = line.items.map((t) => lineItemToNode(t));
 
   // Check if this is an element.
-  for (const key in attributeToElement) {
+  for (const [key, fn] of Object.entries(lineAttributeToElement)) {
     if (line.attributes.hasOwnProperty(key)) {
-      const elem = attributeToElement[key](
-        line.attributes[key],
-        line.attributes,
-      );
-
+      const elem = fn(line.attributes[key as LineAttribute]);
       elem.children = children;
-
       return elem;
     }
   }
@@ -97,14 +104,10 @@ function lineItemToNode(value: Text | ImageInsert): Node {
 
   let node: Node = new TextNode(value.value);
 
-  for (const key in value.attributes) {
-    if (attributeToElement[key]) {
-      const wrappingNode = attributeToElement[key](
-        value.attributes[key],
-        value.attributes,
-      );
+  for (const [key, fn] of Object.entries(textAttributeToElement)) {
+    if (value.attributes.hasOwnProperty(key)) {
+      const wrappingNode = fn(value.attributes[key as TextAttribute]);
       wrappingNode.children = [node];
-
       node = wrappingNode;
     }
   }
@@ -115,7 +118,7 @@ function lineItemToNode(value: Text | ImageInsert): Node {
 function combineListNodes(nodes: Node[]): Node[] {
   // First go over all children, working from the bottom up.
   nodes
-    .filter((n) => n instanceof BaseElement)
+    .filter((n) => n instanceof Element)
     .forEach((n) => {
       n.children = combineListNodes(n.children);
     });

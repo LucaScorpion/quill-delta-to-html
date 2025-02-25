@@ -1,4 +1,4 @@
-import { BlockElement } from './base.ts';
+import { BlockElement } from './element.ts';
 
 export class Header extends BlockElement {
   public constructor(header: number) {

@@ -1,20 +1,22 @@
 import {
   ImageInsert,
   isImage,
+  isLineFormatOp,
   LineAttributes,
   Op,
+  StyleAttributes,
   TextAttributes,
 } from './delta.ts';
 
 export interface Line {
   items: (Text | ImageInsert)[];
-  attributes: LineAttributes;
+  attributes: LineAttributes & StyleAttributes;
   indent: number;
 }
 
 export interface Text {
   value: string;
-  attributes: TextAttributes;
+  attributes: TextAttributes & StyleAttributes;
 }
 
 export function opsToLines(ops: Op[]): Line[] {
@@ -22,7 +24,7 @@ export function opsToLines(ops: Op[]): Line[] {
 
   for (const op of ops) {
     // If we have a line format, apply that to the last line.
-    if (op.insert === '\n') {
+    if (isLineFormatOp(op)) {
       lines[lines.length - 1].attributes = {
         ...lines[lines.length - 1].attributes,
         ...op.attributes,
