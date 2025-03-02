@@ -1,7 +1,7 @@
 {
   "name": "@luca_scorpion/quill-delta-to-html",
-  "version": "0.1.1",
-  "type": "module",
+  "version": "0.1.2",
+  "type": "commonjs",
   "homepage": "https://github.com/LucaScorpion/quill-delta-to-html#readme",
   "bugs": {
     "url": "https://github.com/LucaScorpion/quill-delta-to-html/issues"

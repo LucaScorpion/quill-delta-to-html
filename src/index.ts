@@ -16,7 +16,7 @@ import { Image } from './elements/image';
 import { Text } from './elements/text';
 import { stylesFromAttributes } from './styles';
 
-export { Delta };
+export type { Delta };
 
 export function deltaToHtml(delta: Delta): string {
   // Validate that all operations are inserts.
